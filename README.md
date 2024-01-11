@@ -1,11 +1,11 @@
 tikzdotncross
 ==========
 
-Small set of macros for defining/marking coordinates and crossing (jumps) paths.
+Set of macros for defining/marking coordinates and crossing paths (with jumps).
 
 
 For more details,  see the documentation,
-[tikzdotncross.pdf](http://mirrors.ctan.org/macros/latex/contrib/tikzdotncross/doc/tikzdotncross.pdf)
+[tikzdotncross.pdf](http://mirrors.ctan.org/graphics/pgf/contrib/tikzdotncross/doc/tikzdotncross.pdf)
 
 --------------
 
@@ -70,5 +70,8 @@ The Current Maintainer of this work is Alceu Frigeri
     - documentation in PDF format
 
 -------------
+* Version 1.1 (this)
+    - Documentation typos and improvement. Code cleanup.
+
 * Version 1.0
     - Initial release by CTAN.

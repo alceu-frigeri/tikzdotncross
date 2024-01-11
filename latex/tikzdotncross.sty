@@ -12,7 +12,7 @@
 %%
 %% The Current Maintainer of this work is Alceu Frigeri
 %%
-%% This is version {1.0} {2024/01/02}
+%% This is version {1.1} {2024/01/11}
 %%
 %% The list of files that compose this work can be found in the README.md file at
 %% https://ctan.org/pkg/tikzdotncross
@@ -24,14 +24,12 @@
 %%%==============================================================================
 \NeedsTeXFormat{LaTeX2e}[2022/06/01]
 
-
 \ProvidesExplPackage
     {tikzdotncross}
-    {2024/01/02}
-    {1.0}
+    {2024/01/11}
+    {1.1}
     {Marking coordinates and crossing paths}
 
-\ExplSyntaxOn
 %%%%%%%
 %%%
 %%% Just an attempt of having my packages info in a regular way
@@ -42,31 +40,31 @@
   {
      name        .code:n = {tikzdotncross} ,
      prefix      .code:n = {tikzdotncross} ,
-     date        .code:n = {2024/01/02},
-     version     .code:n = {1.0} ,
-     description .code:n = {Marking coordinates and crossing paths}
-
+     date        .code:n = {2024/01/11},
+     version     .code:n = {1.1} ,
+     description .code:n = {Marking~ coordinates~ and~ crossing~ paths}
   }
-\cs_if_exist:NF \__codedesc_pkg_info:nn 
+\cs_if_exist:NF \PkgInfo 
   {
-    \cs_new_protected:Npn \__codedesc_pkg_info:nn #1#2
-      { \keys_set:nn {#1 / pkg info}{#2} }
-  }
-\cs_if_exist:NF \PkgInfo
-  { \NewDocumentCommand \PkgInfo {mm} { \keys_set:nn {#1 / pkg info}{#2} } }
-\cs_if_exist:NF \PkgDescription
-  { 
+    \NewDocumentCommand \PkgInfo {mm} { \keys_set:nn {#1 / pkg info}{#2} } 
     \NewDocumentCommand \PkgDescription {m} 
-      { 
-        \noindent Package~ \textbf{\PkgInfo{#1}{name}}~Version:~\PkgInfo{#1}{version}~ -~ \PkgInfo{#1}{date}\par \emph{\PkgInfo{#1}{description}}~\par 
-      } 
+      { \noindent Package~ \textbf{\PkgInfo{#1}{name}}~Version:~\PkgInfo{#1}{version}~ -~ \PkgInfo{#1}{date}\par \emph{\PkgInfo{#1}{description}}~\par } 
   }  
 %%%%%%%
 %%% End of cut-n-paste
 %%%%%%%
+
 \ExplSyntaxOff
+
 \makeatletter
 \usetikzlibrary{intersections}
+
+    %%
+    %% There is no easy and clean way 
+    %% to convert this all to expl3 (for instance underscore, under expl3 code regimè, is a letter)
+    %% spaces (pgf/tikz) and then ':' (which is an active character under tikz but a letter for expl3) 
+    %% ... and still being expandable
+    %%
 
   %%%%%%%%%%%%%%%%%%%
   %%%
@@ -84,28 +82,45 @@
    \path[name path=#2 self] (#3) -- (#4);
    \draw[name intersections={of={#5} and {#2 self},name=#2,total=\CrossTotal,sort by={#2 self}}] 
       \pgfextra{\csxdef{#2T}{\CrossTotal}}
-      \foreach \aux in {1,...,\CrossTotal}{(#2-\aux) node[minimum size=#6-\pgflinewidth,inner sep=0pt](n#2-\aux){}};  
+      \foreach \aux in {1,...,\csuse{#2T}}{(#2-\aux) node[minimum size=#6-\pgflinewidth,inner sep=0pt](n#2-\aux){}};  
   \tikzmath{%
-    coordinate \Ctmp; real \dx , \dy , \d;
+    coordinate \Ctmp; real \dx , \dy , \d; int \idx;
     \Ctmp{from} = (#3);
     \Ctmp{to} = (#4);
     \dx{tmp} = \Ctmpx{to} - \Ctmpx{from};
     \dy{tmp} = \Ctmpy{to} - \Ctmpy{from};
     \d{ang} = atan2(\dy{tmp},\dx{tmp});
+    \Ctmp{1st} = (n#2-1);
+    \Ctmp{last} = (n#2-\csuse{#2T});
+    \idx{1st} = 1;
+    \idx{last} = \csuse{#2T};
+    \idx{crossing} = 1;
+    if \Ctmpx{1st} == \Ctmpx{from} then {
+      if \Ctmpy{1st} == \Ctmpy{from} then {
+        \idx{1st} = 2; 
+      };
+    };
+    if \Ctmpx{last} == \Ctmpx{to} then {
+      if \Ctmpy{last} == \Ctmpy{to} then {
+        \idx{last} = \idx{last}-1;
+      };
+    };
   }
-  \draw[line width=1.8\pgflinewidth,white,rotate=\d{ang}]
-    \foreach \aux in {1,...,\csuse{#2T}}{(#2-\aux) +(-#6/2,0) arc[start angle=\dotncross@@sign180,end angle=0,radius=#6/2]};
-  \draw[rotate=\d{ang},line cap=round]
-    \foreach \aux in {1,...,\csuse{#2T}}{(#2-\aux) +(-#6/2,0) arc[start angle=\dotncross@@sign180,end angle=0,radius=#6/2]};
-
-  \gdef\dotncross@@tmpA{#3}
-  \gdef\dotncross@@ListA{}
-  \foreach \x in {1,...,\csuse{#2T}} {\xappto{\dotncross@@ListA}{\dotncross@@tmpA/n#2-\x,}\xdef\dotncross@@tmpA{n#2-\x}}
-  \xappto{\dotncross@@ListA}{n#2-\csuse{#2T}/#4}
-  \foreach \xa/\xb in \dotncross@@ListA {\draw[line cap=round] (\xa) -- (\xb);}
+  \ifnum\idx{last}<\idx{1st}
+    \draw (#3) -- (#4);
+  \else
+    \draw[line width=1.8\pgflinewidth,white,rotate=\d{ang}]
+      \foreach \aux in {\idx{1st},...,\idx{last}}{(#2-\aux) +(-#6/2,0) arc[start angle=\dotncross@@sign180,end angle=0,radius=#6/2]};
+    \draw[rotate=\d{ang},line cap=round]
+      \foreach \aux in {\idx{1st},...,\idx{last}}{(#2-\aux) +(-#6/2,0) arc[start angle=\dotncross@@sign180,end angle=0,radius=#6/2]};
+  
+    \gdef\dotncross@@tmpA{#3}
+    \gdef\dotncross@@ListA{}
+    \foreach \x in {\idx{1st},...,\idx{last}} {\xappto{\dotncross@@ListA}{\dotncross@@tmpA/n#2-\x,}\xdef\dotncross@@tmpA{n#2-\x}}
+    \xappto{\dotncross@@ListA}{n#2-\idx{last}/#4}
+    \foreach \xa/\xb in \dotncross@@ListA {\draw[line cap=round] (\xa) -- (\xb);}
+  \fi
  }
-
-
 
   %%%%%%%%%%%%%%%%%%%
   %%%%
@@ -115,26 +130,21 @@
   %%%% differences: variable number of paramenters (see below) and it always also adds an empty node n<coord>
   %%%%
   %%%%%%%%%%%%%%%%%%%
-
-    %%
-    %% There is no easy and clean way 
-    %% to convert this to expl3 (for instance underscore, under expl3 code regimè, is a letter)
-    %% spaces (pgf/tikz) and then ':' ... and still being expandable
-    %%
 \newcommand\showcoordsfalse{\let\ncoord=\dotncross@@coordnode \let\dotcoord=\dotncross@@dotcoordnode \let\odotcoord=\dotncross@@odotcoordnode}
 \newcommand\showcoordstrue{\let\ncoord=\dotncross@@coordpin \let\dotcoord=\dotncross@@dotcoordpin \let\odotcoord=\dotncross@@odotcoordpin}
 
 \def\dotncross@@coordpin(#1){\pincoord(#1,red,45)}
-\def\dotncross@@coordnode(#1){coordinate(#1)  node(n#1){}}
+\def\dotncross@@coordnode(#1){coordinate(#1)  node[minimum size=1.2pt,inner sep=1.2pt](n#1){}}
 
 \def\dotncross@@dotcoordpin(#1){\dotpincoord(#1,red,45)}
 \def\dotncross@@dotcoordnode(#1){coordinate(#1)  node[circle,minimum size=1.2pt,inner sep=1.2pt,fill](n#1){}}
 
 \def\dotncross@@odotcoordpin(#1){\odotpincoord(#1,red,45)}
 \def\dotncross@@odotcoordnode(#1){coordinate(#1)  node[circle,minimum size=1.2pt,inner sep=1.2pt,fill=white,draw](n#1){}}
+
     %%%%
     %%
-    %%  And some TeX trickery to have a (expandable) variable number of parameters
+    %%  And some TeX to have a (expandable) variable number of parameters
     %%  \pincoord can be used as
     %%  \pincoord(coord-name) That's case D
     %%  \pincoord(coord-name,color) That's case C
@@ -142,25 +152,16 @@
     %%  \pincoord(coord-name,color,angle,lenght) That's case A
     %%
     %%%%    
-\def\dotncross@@pincase#1,#2,#3,#4,#5#6#7#8#9:{#8:#1:#2:#3:#4:}
+\def\dotncross@@pincasew#1#2{\dotncross@@pincase#1,,,,\dotncross@@pincaseA\dotncross@@pincaseB\dotncross@@pincaseC\dotncross@@pincaseD;#2:}
+\def\dotncross@@pincase#1,#2,#3,#4,#5#6#7#8#9:{#8:#1:#2:#3:#4:#9:}
+\def\dotncross@@pincaseA:#1:#2:#3:#4:#5;#6:{\dotncross@@pincoord{#1}{#2}{#3}{#4}{#6}}
+\def\dotncross@@pincaseB:#1:#2:#3:#4:#5;#6:{\dotncross@@pincoord{#1}{#2}{#3}{4}{#6}}
+\def\dotncross@@pincaseC:#1:#2:#3:#4:#5;#6:{\dotncross@@pincoord{#1}{#2}{-45}{4}{#6}}
+\def\dotncross@@pincaseD:#1:#2:#3:#4:#5;#6:{\dotncross@@pincoord{#1}{blue}{-45}{4}{#6}}
 
-\def\pincoord(#1){\dotncross@@pincase#1,,,,\dotncross@@pincaseA\dotncross@@pincaseB\dotncross@@pincaseC\dotncross@@pincaseD:}
-\def\dotncross@@pincaseA:#1:#2:#3:#4:{\dotncross@@pincoord{#1}{#2}{#3}{#4}{}}
-\def\dotncross@@pincaseB:#1:#2:#3:#4:{\dotncross@@pincoord{#1}{#2}{#3}{4}{}}
-\def\dotncross@@pincaseC:#1:#2:#3:#4:{\dotncross@@pincoord{#1}{#2}{-45}{4}{}}
-\def\dotncross@@pincaseD:#1:#2:#3:#4:{\dotncross@@pincoord{#1}{blue}{-45}{4}{}}
-
-\def\dotpincoord(#1){\dotncross@@pincase#1,,,,\dotncross@@dotpincaseA\dotncross@@dotpincaseB\dotncross@@dotpincaseC\dotncross@@dotpincaseD:}
-\def\dotncross@@dotpincaseA:#1:#2:#3:#4:{\dotncross@@pincoord{#1}{#2}{#3}{#4}{circle,fill,}}
-\def\dotncross@@dotpincaseB:#1:#2:#3:#4:{\dotncross@@pincoord{#1}{#2}{#3}{4}{circle,fill,}}
-\def\dotncross@@dotpincaseC:#1:#2:#3:#4:{\dotncross@@pincoord{#1}{#2}{-45}{4}{circle,fill,}}
-\def\dotncross@@dotpincaseD:#1:#2:#3:#4:{\dotncross@@pincoord{#1}{blue}{-45}{4}{circle,fill,}}
-
-\def\odotpincoord(#1){\dotncross@@pincase#1,,,,\dotncross@@odotpincaseA\dotncross@@odotpincaseB\dotncross@@odotpincaseC\dotncross@@odotpincaseD:}
-\def\dotncross@@odotpincaseA:#1:#2:#3:#4:{\dotncross@@pincoord{#1}{#2}{#3}{#4}{circle,fill=white,draw,}}
-\def\dotncross@@odotpincaseB:#1:#2:#3:#4:{\dotncross@@pincoord{#1}{#2}{#3}{4}{circle,fill=white,draw,}}
-\def\dotncross@@odotpincaseC:#1:#2:#3:#4:{\dotncross@@pincoord{#1}{#2}{-45}{4}{circle,fill=white,draw,}}
-\def\dotncross@@odotpincaseD:#1:#2:#3:#4:{\dotncross@@pincoord{#1}{blue}{-45}{4}{circle,fill=white,draw,}}
+\def\pincoord(#1){\dotncross@@pincasew{#1}{}}
+\def\dotpincoord(#1){\dotncross@@pincasew{#1}{circle,fill,}}
+\def\odotpincoord(#1){\dotncross@@pincasew{#1}{circle,fill=white,draw,}}
 
 \newcommand\dotncross@@pincoord[5]{%
   coordinate(#1) node[#5minimum size=1.2pt,inner sep=1.2pt](n#1){}
