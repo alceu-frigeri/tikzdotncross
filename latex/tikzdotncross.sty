@@ -12,7 +12,7 @@
 %%
 %% The Current Maintainer of this work is Alceu Frigeri
 %%
-%% This is version {1.1} {2024/01/11}
+%% This is version {1.2} {2024/10/22}
 %%
 %% The list of files that compose this work can be found in the README.md file at
 %% https://ctan.org/pkg/tikzdotncross
@@ -26,8 +26,8 @@
 
 \ProvidesExplPackage
     {tikzdotncross}
-    {2024/01/11}
-    {1.1}
+    {2024/10/22}
+    {1.2}
     {Marking coordinates and crossing paths}
 
 %%%%%%%
@@ -40,8 +40,8 @@
   {
      name        .code:n = {tikzdotncross} ,
      prefix      .code:n = {tikzdotncross} ,
-     date        .code:n = {2024/01/11},
-     version     .code:n = {1.1} ,
+     date        .code:n = {2024/10/22},
+     version     .code:n = {1.2} ,
      description .code:n = {Marking~ coordinates~ and~ crossing~ paths}
   }
 \cs_if_exist:NF \PkgInfo 
@@ -54,9 +54,48 @@
 %%% End of cut-n-paste
 %%%%%%%
 
+%%%
+%%% why that here? well, the token list's commands will be used outside expl3 'domain'
+%%%
+\makeatletter
+
+\keys_define:nn { tikzdotncross }
+  {
+    pin size .tl_set:N          = \dotncross@@pinsep ,
+    pin size .value_required:n  = true ,
+    pin size .initial:n         = 1.2 ,
+    pin size .usage:n           = general ,
+
+    pin ang .tl_set:N          = \dotncross@@pinang ,
+    pin ang .value_required:n  = true ,
+    pin ang .initial:n         = 45 ,
+    pin ang .usage:n           = general ,
+
+    pin color .tl_set:N          = \dotncross@@pincolor ,
+    pin color .value_required:n  = true ,
+    pin color .initial:n         = blue ,
+    pin color .usage:n           = general ,
+
+    pin length .tl_set:N          = \dotncross@@pindistance ,
+    pin length .value_required:n  = true ,
+    pin length .initial:n         = 4 ,
+    pin length .usage:n           = general ,
+
+    coord color .tl_set:N          = \dotncross@@coordcolor ,
+    coord color .value_required:n  = true ,
+    coord color .initial:n         = red ,
+    coord color .usage:n           = general ,
+  }
+
+\ProcessKeyOptions [ tikzdotncross ]
+
+\NewDocumentCommand{\setpindefaults}{m} {
+  \keys_set:nn {tikzdotncross}{#1}
+}
+
 \ExplSyntaxOff
 
-\makeatletter
+%\makeatletter
 \usetikzlibrary{intersections}
 
     %%
@@ -84,17 +123,16 @@
       \pgfextra{\csxdef{#2T}{\CrossTotal}}
       \foreach \aux in {1,...,\csuse{#2T}}{(#2-\aux) node[minimum size=#6-\pgflinewidth,inner sep=0pt](n#2-\aux){}};  
   \tikzmath{%
-    coordinate \Ctmp; real \dx , \dy , \d; int \idx;
+    coordinate \Ctmp; real \dtmp; int \idx;
     \Ctmp{from} = (#3);
     \Ctmp{to} = (#4);
-    \dx{tmp} = \Ctmpx{to} - \Ctmpx{from};
-    \dy{tmp} = \Ctmpy{to} - \Ctmpy{from};
-    \d{ang} = atan2(\dy{tmp},\dx{tmp});
+    \dtmp{x} = \Ctmpx{to} - \Ctmpx{from};
+    \dtmp{y} = \Ctmpy{to} - \Ctmpy{from};
+    \dtmp{ang} = atan2(\dtmp{y},\dtmp{x});
     \Ctmp{1st} = (n#2-1);
     \Ctmp{last} = (n#2-\csuse{#2T});
     \idx{1st} = 1;
     \idx{last} = \csuse{#2T};
-    \idx{crossing} = 1;
     if \Ctmpx{1st} == \Ctmpx{from} then {
       if \Ctmpy{1st} == \Ctmpy{from} then {
         \idx{1st} = 2; 
@@ -109,9 +147,9 @@
   \ifnum\idx{last}<\idx{1st}
     \draw (#3) -- (#4);
   \else
-    \draw[line width=1.8\pgflinewidth,white,rotate=\d{ang}]
+    \draw[line width=1.8\pgflinewidth,white,rotate=\dtmp{ang}]
       \foreach \aux in {\idx{1st},...,\idx{last}}{(#2-\aux) +(-#6/2,0) arc[start angle=\dotncross@@sign180,end angle=0,radius=#6/2]};
-    \draw[rotate=\d{ang},line cap=round]
+    \draw[rotate=\dtmp{ang},line cap=round]
       \foreach \aux in {\idx{1st},...,\idx{last}}{(#2-\aux) +(-#6/2,0) arc[start angle=\dotncross@@sign180,end angle=0,radius=#6/2]};
   
     \gdef\dotncross@@tmpA{#3}
@@ -133,14 +171,14 @@
 \newcommand\showcoordsfalse{\let\ncoord=\dotncross@@coordnode \let\dotcoord=\dotncross@@dotcoordnode \let\odotcoord=\dotncross@@odotcoordnode}
 \newcommand\showcoordstrue{\let\ncoord=\dotncross@@coordpin \let\dotcoord=\dotncross@@dotcoordpin \let\odotcoord=\dotncross@@odotcoordpin}
 
-\def\dotncross@@coordpin(#1){\pincoord(#1,red,45)}
-\def\dotncross@@coordnode(#1){coordinate(#1)  node[minimum size=1.2pt,inner sep=1.2pt](n#1){}}
+\def\dotncross@@coordpin(#1){\pincoord(#1,\dotncross@@coordcolor,\dotncross@@pinang)}
+\def\dotncross@@coordnode(#1){coordinate(#1)  node[minimum size=\dotncross@@pinsep pt,inner sep=\dotncross@@pinsep pt](n#1){}}
 
-\def\dotncross@@dotcoordpin(#1){\dotpincoord(#1,red,45)}
-\def\dotncross@@dotcoordnode(#1){coordinate(#1)  node[circle,minimum size=1.2pt,inner sep=1.2pt,fill](n#1){}}
+\def\dotncross@@dotcoordpin(#1){\dotpincoord(#1,\dotncross@@coordcolor,\dotncross@@pinang)}
+\def\dotncross@@dotcoordnode(#1){coordinate(#1)  node[circle,minimum size=\dotncross@@pinsep pt,inner sep=\dotncross@@pinsep pt,fill](n#1){}}
 
-\def\dotncross@@odotcoordpin(#1){\odotpincoord(#1,red,45)}
-\def\dotncross@@odotcoordnode(#1){coordinate(#1)  node[circle,minimum size=1.2pt,inner sep=1.2pt,fill=white,draw](n#1){}}
+\def\dotncross@@odotcoordpin(#1){\odotpincoord(#1,\dotncross@@coordcolor,\dotncross@@pinang)}
+\def\dotncross@@odotcoordnode(#1){coordinate(#1)  node[circle,minimum size=\dotncross@@pinsep pt,inner sep=\dotncross@@pinsep pt,fill=white,draw](n#1){}}
 
     %%%%
     %%
@@ -155,17 +193,17 @@
 \def\dotncross@@pincasew#1#2{\dotncross@@pincase#1,,,,\dotncross@@pincaseA\dotncross@@pincaseB\dotncross@@pincaseC\dotncross@@pincaseD;#2:}
 \def\dotncross@@pincase#1,#2,#3,#4,#5#6#7#8#9:{#8:#1:#2:#3:#4:#9:}
 \def\dotncross@@pincaseA:#1:#2:#3:#4:#5;#6:{\dotncross@@pincoord{#1}{#2}{#3}{#4}{#6}}
-\def\dotncross@@pincaseB:#1:#2:#3:#4:#5;#6:{\dotncross@@pincoord{#1}{#2}{#3}{4}{#6}}
-\def\dotncross@@pincaseC:#1:#2:#3:#4:#5;#6:{\dotncross@@pincoord{#1}{#2}{-45}{4}{#6}}
-\def\dotncross@@pincaseD:#1:#2:#3:#4:#5;#6:{\dotncross@@pincoord{#1}{blue}{-45}{4}{#6}}
+\def\dotncross@@pincaseB:#1:#2:#3:#4:#5;#6:{\dotncross@@pincoord{#1}{#2}{#3}{\dotncross@@pindistance}{#6}}
+\def\dotncross@@pincaseC:#1:#2:#3:#4:#5;#6:{\dotncross@@pincoord{#1}{#2}{-\dotncross@@pinang}{\dotncross@@pindistance}{#6}}
+\def\dotncross@@pincaseD:#1:#2:#3:#4:#5;#6:{\dotncross@@pincoord{#1}{\dotncross@@pincolor}{-\dotncross@@pinang}{\dotncross@@pindistance}{#6}}
 
 \def\pincoord(#1){\dotncross@@pincasew{#1}{}}
 \def\dotpincoord(#1){\dotncross@@pincasew{#1}{circle,fill,}}
 \def\odotpincoord(#1){\dotncross@@pincasew{#1}{circle,fill=white,draw,}}
 
 \newcommand\dotncross@@pincoord[5]{%
-  coordinate(#1) node[#5minimum size=1.2pt,inner sep=1.2pt](n#1){}
-  node[circle, #2,  inner sep=1.2pt, outer sep=0pt, radius=1pt, fill=#2!20!white, fill opacity=0.2, draw opacity=0.4, draw,
+  coordinate(#1) node[#5minimum size=\dotncross@@pinsep pt,inner sep=\dotncross@@pinsep pt](n#1){}
+  node[circle, #2,  inner sep=\dotncross@@pinsep pt, outer sep=0pt, radius=1pt, fill=#2!20!white, fill opacity=0.2, draw opacity=0.4, draw,
     pin={[#2, overlay, inner sep=0pt, outer sep=1pt, font=\tiny, pin distance=#4pt,
     pin edge={#2, overlay}]#3:#1}]{}%
 }

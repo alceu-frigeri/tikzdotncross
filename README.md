@@ -70,7 +70,10 @@ The Current Maintainer of this work is Alceu Frigeri
     - documentation in PDF format
 
 -------------
-* Version 1.1 (this)
+* Version 1.2 (this)
+    - Added some package options, to change pin defaults, see documentation.
+
+* Version 1.1 
     - Documentation typos and improvement. Code cleanup.
  
 * Version 1.0

@@ -15,7 +15,7 @@
 %%
 %% The Current Maintainer of this work is Alceu Frigeri
 %%
-%% This is version {1.1} {2024/01/11}
+%% This is version {1.2} {2024/10/22}
 %%
 %% The list of files that compose this work can be found in the README.md file at
 %% https://ctan.org/pkg/tikzdotncross
@@ -47,11 +47,27 @@ This package offers a few alternative ways for declaring and marking coordinates
 %\tableofcontents
 
 \section{Introduction}
-One recurring problem when drawing in general is how to interpret a crossing line. There are many conventions, notably, the old school (like the author of this) a jump denotes ``non touching lines'' while a simple cross is a connection, more recently (like the past 25 years), the winning convention has been that a dot marks a connection, whilst a simple cross denotes ``non touching lines''. Many, for the sake of staying in the safe side of the wall are now marking a connection with dots and non touching lines with a jump, which is a bit overkill, but at least there is no margin for error.
+One recurring problem when drawing circuits in general is how to interpret a crossing line. There are many conventions, notably, for the old school (like the author of this) a jump denotes ``non touching lines'' while a simple cross is a connection, more recently (like the past 25 years), the winning convention has been that a dot marks a connection, whilst a simple cross denotes ``non touching lines''. Many, for the sake of staying in the safe side of the wall,  mark a connection with dots and non touching lines with a jump, which is a bit overkill, but at least there is no margin for interpretation errors.
 
 And that's it, this package defines some commands to mark/pin a connection, declaring a coordinate and node at the same spot, for later reference, and a command to draw a line jumping over crossing lines of a pre-existent path.
 
 
+\section{Package Options}\label{options}
+\begin{describelist}{option}
+  \describe {pinsize} {pin (circle) size (default: 1.2), in pt.}
+  \describe {pinang} {pin angle (default: 45). }
+  \describe {pincolor} {pin color (default: blue).}
+  \describe {pinlength} {pin length (default: 4), in pt.}
+  \describe {coordcolor} {coordinate color (default: red), used if \tsobj{\showcoordstrue}.}
+\end{describelist}
+ 
+
+Those can also be set, middle code, via:
+\begin{codedescribe}[code,new=2024/10/22]{\setpindefaults}
+\begin{codesyntax}%
+\tsmacro{\setpindefaults}{options as above}
+\end{codesyntax}
+\end{codedescribe}
 
 \section{Declaring and Marking Coordinates/Nodes}\label{coord}
 Those are based on some ideas from Redaelli et al. (\tsobj[pkg]{CircuiTikZ}). Main differences: a variable number of parameters (see below) and it always also adds an empty node n\tsobj[marg]{coord}.
@@ -69,13 +85,16 @@ These will affect how \tsobj{\ncoord,\dotcoord,\odotcoord} will behave, with \ts
 \tsobj{\pincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord}\tsverb{)}
 \tsobj{\pincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color}\tsverb{)}
 \tsobj{\pincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle}\tsverb{)}
-\tsobj{\pincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle,distance}\tsverb{)}
+\tsobj{\pincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle,length}\tsverb{)}
 \end{codesyntax}
 The \tsobj{\ncoord} always expects a single parameter \tsobj[parg]{coord}. A coordinate named \tsobj[marg]{coord} and node named n\tsobj[marg]{coord} (a ``n'' is added as a prefix) will be created for later use/reference. If \tsobj{\showcoordstrue} is en force, it will also add a pin.
 
-The \tsobj{\pincoord} always draws a pin, besides declaring a coordinate and node as \tsobj{\ncoord}. It expects one to 4 parameters, as listed. If omitted, the default value for distance is 4 (unit: pt), the default value for the angle is -45 (degrees), the default value for color is blue.
-In fact, the \tsobj{\coord(name)} is just a short cut for \tsverb{\pincoord(name,red,45)}, if \tsobj{\showcoordstrue}.
+The \tsobj{\pincoord} always draws a pin, besides declaring a coordinate and node as \tsobj{\ncoord}. It expects one to 4 parameters, as listed. If omitted, the default length is 4 (unit: pt), the default angle is -45 (degrees), the default color is blue.
+Likewise, if \tsobj{\showcoordstrue}, \tsobj{\coord(name)} is just a short cut for \tsverb{\pincoord(name,red,45)}.
 \end{codedescribe}
+\begin{tsremark}
+  Those defaults can be changed via package options, see \ref{options}, or \tsobj{\setpindefaults}.
+\end{tsremark}
 
 \begin{codedescribe}{\dotcoord,\dotpincoord}
 \begin{codesyntax}%
@@ -83,7 +102,7 @@ In fact, the \tsobj{\coord(name)} is just a short cut for \tsverb{\pincoord(name
 \tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord}\tsverb{)}
 \tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color}\tsverb{)}
 \tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle}\tsverb{)}
-\tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle,distance}\tsverb{)}
+\tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle,length}\tsverb{)}
 \end{codesyntax}
 These are the same as \tsobj{\ncoord} and friends, just adding a dot (a filled in, small circle) at the coordinate.
 \end{codedescribe}
@@ -94,7 +113,7 @@ These are the same as \tsobj{\ncoord} and friends, just adding a dot (a filled i
 \tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord}\tsverb{)}
 \tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color}\tsverb{)}
 \tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle}\tsverb{)}
-\tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle,distance}\tsverb{)}
+\tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle,length}\tsverb{)}
 \end{codesyntax}
 These are the same as \tsobj{\ncoord} and friends, just adding an open dot (a small circle filled with white) at the coordinate.
 \end{codedescribe}
@@ -114,7 +133,7 @@ Then this will ``calculate'' the intersections between the line (defined by the 
 
 At each intersection a semi-circle will be drawn, and finally a line will be draw connecting \tsobj[marg]{coordA} to \tsobj[marg]{coordB} over all intermediate nodes.
 
-The  star version flips the semi-circles.
+The  star version flips the semi-circles orientation.
 \begin{tsremark}
   The default \tsobj[oarg]{cross-name} is ``cross''. It may contain only characters, as any valid \TeX\ macro name. The default \tsobj[oarg]{width} of the semi-circle is 7pt.
 \end{tsremark}
@@ -126,7 +145,7 @@ The  star version flips the semi-circles.
 \end{tsremark}
 \end{codedescribe}
 
-\newpage
+%\newpage
 \section{Some Examples}
 \textbf{\color{red}Note:} In the examples below, the circuit doesn't make much/any sense, it is just a way to show the commands possibilities.
 
@@ -175,6 +194,8 @@ And the same with \tsobj{\showcoordsfalse}
 \newpage
 As said, the main limitation (derived from how \tsobj[pkg]{intersections} works) is that crossings between the line and nodes might not be detected at all. For example, if someone tries to connect the nodes \tsobj[key]{D1,D2}, it will, unfortunately, fail detecting the node (pnp transistor) entirely:
 
+%\showcoordstrue
+%\setpindefaults{coordcolor=cyan,pincolor=red}
 \begin{codestore}[crossdemoC]
 \resizebox{0.5\textwidth}{!}{
 \begin{tikzpicture}
