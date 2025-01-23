@@ -12,7 +12,7 @@
 %%
 %% The Current Maintainer of this work is Alceu Frigeri
 %%
-%% This is version {1.2} {2024/10/22}
+%% This is version {1.2b} {2025/01/23}
 %%
 %% The list of files that compose this work can be found in the README.md file at
 %% https://ctan.org/pkg/tikzdotncross
@@ -26,8 +26,8 @@
 
 \ProvidesExplPackage
     {tikzdotncross}
-    {2024/10/22}
-    {1.2}
+    {2025/01/23}
+    {1.2b}
     {Marking coordinates and crossing paths}
 
 %%%%%%%
@@ -40,8 +40,8 @@
   {
      name        .code:n = {tikzdotncross} ,
      prefix      .code:n = {tikzdotncross} ,
-     date        .code:n = {2024/10/22},
-     version     .code:n = {1.2} ,
+     date        .code:n = {2025/01/23},
+     version     .code:n = {1.2b} ,
      description .code:n = {Marking~ coordinates~ and~ crossing~ paths}
   }
 \cs_if_exist:NF \PkgInfo 
@@ -96,7 +96,7 @@
 \ExplSyntaxOff
 
 %\makeatletter
-\usetikzlibrary{intersections}
+\usetikzlibrary{math,intersections}
 
     %%
     %% There is no easy and clean way 
