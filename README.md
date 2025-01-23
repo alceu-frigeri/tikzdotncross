@@ -70,8 +70,8 @@ The Current Maintainer of this work is Alceu Frigeri
     - documentation in PDF format
 
 -------------
-* Version 1.2b (this)
-    - correcting package dependencies (issue #1).
+* Version 1.2b/1.2c (this)
+    - correcting package dependencies snafu (issue #1).
 
 * Version 1.2 
     - Added some package options, to change pin defaults, see documentation.
