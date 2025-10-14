@@ -70,6 +70,9 @@ The Current Maintainer of this work is Alceu Frigeri
     - documentation in PDF format
 
 -------------
+* Version 1.2d (next)
+    - typos.
+
 * Version 1.2b/1.2c (this)
     - correcting package dependencies snafu (issue #1).
 
