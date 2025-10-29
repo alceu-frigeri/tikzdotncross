@@ -40,7 +40,7 @@
 \pkginfograb_set:nn { tikzdotncross }
   {
      name        = {tikzdotncross} ,
-     prefix      = {tikzdotncross} ,
+     prefix      = {dotncross} ,
      date        = {2025/10/29},
      version     = {1.3} ,
      description = {Marking~ coordinates~ and~ crossing~ paths}
@@ -100,27 +100,27 @@
 
 \keys_define:nn { tikzdotncross / show coords}
   {
-    on .bool_set:N          = \l__show_coords_bool ,
+    on .bool_set:N          = \l__dotncross_showcoords_bool ,
     on .value_forbidden:n   = true ,
     
-    off .bool_set_inverse:N = \l__show_coords_bool ,
+    off .bool_set_inverse:N = \l__dotncross_showcoords_bool ,
     off .value_forbidden:n  = true ,
 
-    true .bool_set:N          = \l__show_coords_bool ,
+    true .bool_set:N          = \l__dotncross_showcoords_bool ,
     true .value_forbidden:n   = true ,
     
-    false .bool_set_inverse:N = \l__show_coords_bool ,
+    false .bool_set_inverse:N = \l__dotncross_showcoords_bool ,
     false .value_forbidden:n  = true ,
   }
 
-\cs_new:Npn \__dotncross_showcoords:
+\cs_new:Npn \__dotncross_hidecoords:
   {
     \cs_set_eq:NN \ncoord    \__dotncross_coordnode:w 
     \cs_set_eq:NN \dotcoord  \__dotncross_dotcoordnode:w 
     \cs_set_eq:NN \odotcoord \__dotncross_odotcoordnode:w
   }
 
-\cs_new:Npn \__dotncross_hidecoords:
+\cs_new:Npn \__dotncross_showcoords:
   {
     \cs_set_eq:NN \ncoord    \__dotncross_coordpin:w 
     \cs_set_eq:NN \dotcoord  \__dotncross_dotcoordpin:w 
@@ -129,7 +129,7 @@
 
 \NewDocumentCommand{\showcoords}{m} {
   \keys_set:nn {tikzdotncross / show coords}{#1}
-  \bool_if:NTF \l__show_coords_bool
+  \bool_if:NTF \l__dotncross_showcoords_bool
     \__dotncross_showcoords:
     \__dotncross_hidecoords:
 }
@@ -137,6 +137,9 @@
 \cs_new_eq:NN \showcoordsfalse \__dotncross_hidecoords:
 \cs_new_eq:NN \showcoordstrue  \__dotncross_showcoords:
 
+
+\bool_set_false:N \l__dotncross_showcoords_bool
+\showcoordsfalse        
 
 
 \cs_new:Npn \__dotncross_coordpin:w (#1)
@@ -222,8 +225,6 @@
     \dotncross@@pincoord \l__dotncross_pinsep_tl 
   }
   
-
-\showcoordsfalse        
 
 %%
 %%  Original/Old TeX code
@@ -343,7 +344,6 @@
     \foreach \xa/\xb in \dotncross@path@@ListA {\draw[line cap=round] (\xa) -- (\xb);}
   \fi
  }
-
 
 
 %%%%%%%
