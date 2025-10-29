@@ -138,10 +138,6 @@
 \cs_new_eq:NN \showcoordstrue  \__dotncross_showcoords:
 
 
-\bool_set_false:N \l__dotncross_showcoords_bool
-\showcoordsfalse        
-
-
 \cs_new:Npn \__dotncross_coordpin:w (#1)
   {
     \pincoord(#1,\l__dotncross_coordcolor_tl,\l__dotncross_pinang_tl)
@@ -225,6 +221,12 @@
     \dotncross@@pincoord \l__dotncross_pinsep_tl 
   }
   
+
+
+
+\bool_set_false:N \l__dotncross_showcoords_bool
+\showcoordsfalse        
+
 
 %%
 %%  Original/Old TeX code
