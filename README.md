@@ -72,7 +72,7 @@ The Current Maintainer of this work is Alceu Frigeri
 -------------
 * Version 1.3 (this)
     - typos. adding \showcoords alternate form. rewriting the TeX part as expl
-    - switching over <pkginfograb> package's info
+    - switching over pkginfograb package's info
 
 * Version 1.2b/1.2c
     - correcting package dependencies snafu (issue #1).
