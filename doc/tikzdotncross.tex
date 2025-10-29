@@ -20,7 +20,7 @@
 %%
 %% The Current Maintainer of this work is Alceu Frigeri
 %%
-%% This is version {1.2c} {2025/01/23}
+%% This is version {1.3} {2025/10/29}
 %%
 %% The list of files that compose this work can be found in the README.md file at
 %% https://ctan.org/pkg/tikzdotncross
@@ -31,7 +31,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-\usepackage{codedescribe}
+\usepackage[infograb]{codedescribe}
 \RequirePackage[inline]{enumitem}
 \SetEnumitemKey{miditemsep}{parsep=0ex,itemsep=0.4ex}
 
@@ -86,18 +86,27 @@ Those are based on some ideas from Redaelli et al. (\tsobj[pkg]{CircuiTikZ}). Ma
 These will affect how \tsobj{\ncoord,\dotcoord,\odotcoord} will behave, with \tsobj{\showcoordstrue} a red pin will also be added to the newly defined coordinate/node. The initial state is \tsobj{\showcoordsfalse}. It can be turned on/off as needed.
 \end{codedescribe}
 
+\begin{codedescribe}[code,new=2025/10/29]{\showcoords}
+\begin{codesyntax}%
+\tsmacro{\showcoords}{val}
+\end{codesyntax}
+Alternative form to set newly defined coordinates visibility. If \tsobj[marg]{val} is either \tsobj[option,sep=or]{on,true} this will be equivalent to \tsobj{\showcoordstrue}, otherwise if \tsobj[marg]{val} is either \tsobj[option,sep=or]{off,false} this will be equivalent to \tsobj{\showcoordsfalse}.
+\end{codedescribe}
+
+
+
 \begin{codedescribe}{\ncoord,\pincoord}
 \begin{codesyntax}%
 \tsobj{\ncoord}\tsverb{(}\tsobj[oarg]{coord}\tsverb{)}
-\tsobj{\pincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord}\tsverb{)}
-\tsobj{\pincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color}\tsverb{)}
-\tsobj{\pincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle}\tsverb{)}
-\tsobj{\pincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle,length}\tsverb{)}
+\tsobj{\pincoord}\tsverb{(}\tsobj[oarg,comma]{coord}\tsverb{)}
+\tsobj{\pincoord}\tsverb{(}\tsobj[oarg,comma]{coord,color}\tsverb{)}
+\tsobj{\pincoord}\tsverb{(}\tsobj[oarg,comma]{coord,color,angle}\tsverb{)}
+\tsobj{\pincoord}\tsverb{(}\tsobj[oarg,comma]{coord,color,angle,length}\tsverb{)}
 \end{codesyntax}
 The \tsobj{\ncoord} always expects a single parameter \tsobj[parg]{coord}. A coordinate named \tsobj[marg]{coord} and node named n\tsobj[marg]{coord} (a ``n'' is added as a prefix) will be created for later use/reference. If \tsobj{\showcoordstrue} is en force, it will also add a pin.
 
 The \tsobj{\pincoord} always draws a pin, besides declaring a coordinate and node as \tsobj{\ncoord}. It expects one to 4 parameters, as listed. If omitted, the default length is 4 (unit: pt), the default angle is -45 (degrees), the default color is blue.
-Likewise, if \tsobj{\showcoordstrue}, \tsobj{\coord(name)} is just a short cut for \tsverb{\pincoord(name,red,45)}.
+Likewise, if \tsobj{\showcoordstrue}, \tsobj{\ncoord(name)} is just a short cut for \tsverb{\pincoord(name,red,45)}.
 \end{codedescribe}
 \begin{tsremark}
   Those defaults can be changed via package options, see \ref{options}, or \tsobj{\setpindefaults}.
@@ -106,10 +115,10 @@ Likewise, if \tsobj{\showcoordstrue}, \tsobj{\coord(name)} is just a short cut f
 \begin{codedescribe}{\dotcoord,\dotpincoord}
 \begin{codesyntax}%
 \tsobj{\dotcoord}\tsverb{(}\tsobj[oarg]{coord}\tsverb{)}
-\tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord}\tsverb{)}
-\tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color}\tsverb{)}
-\tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle}\tsverb{)}
-\tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle,length}\tsverb{)}
+\tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,comma]{coord}\tsverb{)}
+\tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,comma]{coord,color}\tsverb{)}
+\tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,comma]{coord,color,angle}\tsverb{)}
+\tsobj{\dotpincoord}\tsverb{(}\tsobj[oarg,comma]{coord,color,angle,length}\tsverb{)}
 \end{codesyntax}
 These are the same as \tsobj{\ncoord} and friends, just adding a dot (a filled in, small circle) at the coordinate.
 \end{codedescribe}
@@ -117,10 +126,10 @@ These are the same as \tsobj{\ncoord} and friends, just adding a dot (a filled i
 \begin{codedescribe}{\odotcoord,\odotpincoord}
 \begin{codesyntax}%
 \tsobj{\odotcoord}\tsverb{(}\tsobj[oarg]{coord}\tsverb{)}
-\tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord}\tsverb{)}
-\tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color}\tsverb{)}
-\tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle}\tsverb{)}
-\tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,sep={,}]{coord,color,angle,length}\tsverb{)}
+\tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,comma]{coord}\tsverb{)}
+\tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,comma]{coord,color}\tsverb{)}
+\tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,comma]{coord,color,angle}\tsverb{)}
+\tsobj{\odotpincoord}\tsverb{(}\tsobj[oarg,comma]{coord,color,angle,length}\tsverb{)}
 \end{codesyntax}
 These are the same as \tsobj{\ncoord} and friends, just adding an open dot (a small circle filled with white) at the coordinate.
 \end{codedescribe}
@@ -156,8 +165,9 @@ The  star version flips the semi-circles orientation.
 \section{Some Examples}
 \textbf{\color{red}Note:} In the examples below, the circuit doesn't make much/any sense, it is just a way to show the commands possibilities.
 
-A first example with \tsobj{\showcoordstrue} (showing all coordinates defined with \tsobj{\ncoord}).
-\showcoordstrue
+A first example with \tsobj{\showcoords{true}} (showing all coordinates defined with \tsobj{\ncoord}).
+%\showcoordstrue
+\showcoords{true}
 \begin{codestore}[crossdemoA]
 \resizebox{0.5\textwidth}{!}{
 \begin{tikzpicture}
@@ -193,8 +203,9 @@ A first example with \tsobj{\showcoordstrue} (showing all coordinates defined wi
 
 \tsdemo*[emph={draw,node,ncoord,pincoord,dotcoord,odotcoord},emph2={pathcross},emph3={name,path},basicstyle={\scriptsize\ttfamily},numbers=left]{crossdemoA}
 
-And the same with \tsobj{\showcoordsfalse}
-\showcoordsfalse
+And the same with \tsobj{\showcoords{false}}
+%\showcoordsfalse
+\showcoords{false}
 
 \tsresult*[emph={draw,node,ncoord,pincoord,dotcoord,odotcoord},emph2={pathcross},emph3={name,path},basicstyle={\scriptsize\ttfamily},numbers=left]{crossdemoA}
 
