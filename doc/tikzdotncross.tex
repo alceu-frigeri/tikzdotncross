@@ -5,7 +5,7 @@
 % !TEX program = pdflatex
 % !PDFTeXify ext =  --enable-etex  --restrict-write18
 % !PDFLaTeX ext  =  --enable-etex  --restrict-write18
-% !BIB program = none
+% !BIB program = biber
 %%%==============================================================================
 %% Copyright 2024-present by Alceu Frigeri
 %%
@@ -35,9 +35,29 @@
 \RequirePackage[inline]{enumitem}
 \SetEnumitemKey{miditemsep}{parsep=0ex,itemsep=0.4ex}
 
+\RequirePackage[backend=biber]{biblatex}
+\addbibresource{tikzdotncross.bib}
+
 \usepackage[american,siunitx,cuteinductors,smartlabels,arrowmos,EFvoltages,betterproportions]{circuitikz}
 \usepackage{tikzdotncross}
 \RequirePackage[hidelinks,hypertexnames=false]{hyperref}
+
+
+%%
+%% setting keywords emphasis
+%%
+\setnewcodekey{dotncross keys}
+  {
+    emph={draw,node,ncoord,pincoord,dotcoord,odotcoord},
+    emph2={pathcross},
+    emph3={name,path},
+    %basicstyle={\scriptsize\ttfamily},
+    numbers=left,
+    codeprefix={},
+    resultprefix={}
+  }
+
+
 \begin{document}
 \tstitle{
   author={Alceu Frigeri\footnote{\tsverb{https://github.com/alceu-frigeri/tikzdotncross}}},
@@ -45,18 +65,36 @@
   title={The tikzdotncross Package\break Marking Coordinates and Crossing Paths\break Version \PkgInfo{tikzdotncross}{version}}
   }
   
-
+  
 \begin{typesetabstract}
  
-This package offers a few alternative ways for declaring and marking coordinates and drawing a line with ``jumps over'' an already given path, which is a quite common issue when drawing, for instance, Electronics Circuits, e.g. \tsobj[pkg]{CircuiTikZ}.
+This package offers a few alternative ways for declaring and marking coordinates and drawing a line with ``jumps over'' an already given path, which is a quite common issue when drawing, for instance, Electronics Circuits, e.g. \tsobj[pkg]{CircuiTikZ}\cite{circuitikz}.
 \end{typesetabstract}
 
-%\tableofcontents
+\tableofcontents
 
 \section{Introduction}
 One recurring problem when drawing circuits in general is how to interpret a crossing line. There are many conventions, notably, for the old school (like the author of this) a jump denotes ``non touching lines'' while a simple cross is a connection, more recently (like the past 25 years), the winning convention has been that a dot marks a connection, whilst a simple cross denotes ``non touching lines''. Many, for the sake of staying in the safe side of the wall,  mark a connection with dots and non touching lines with a jump, which is a bit overkill, but at least there is no margin for interpretation errors.
 
 And that's it, this package defines some commands to mark/pin a connection, declaring a coordinate and node at the same spot, for later reference, and a command to draw a line jumping over crossing lines of a pre-existent path.
+
+\section{Requirements}
+
+The user has to load \tsobj[pkg]{tikz}\cite{TIKZPGF:3.1} (directly, or indirectly, for instance loading \tsobj[pkg]{circuitikz}\cite{circuitikz}) before using this package.
+
+Keep in mind, as well, that this package loads some Ti\emph{k}Z libraries (\tsobj[pkg]{math,intersections}) and the \tsobj[pkg]{etoolbox}\cite{etoolbox} package. 
+
+
+\begin{codestore}[reqmts]
+\usepackage{tikz}
+\usepackage{tikzdotncross}
+\end{codestore}
+\begin{codestore}[reqmts]
+\usepackage[american,siunitx]{circuitikz}
+\usepackage{tikzdotncross}
+\end{codestore}
+\tscode*[dotncross keys]{reqmts}[1]
+\tscode*[dotncross keys]{reqmts}[2]
 
 
 \section{Package Options}\label{options}
@@ -165,11 +203,10 @@ The  star version flips the semi-circles orientation.
 \section{Some Examples}
 \textbf{\color{red}Note:} In the examples below, the circuit doesn't make much/any sense, it is just a way to show the commands possibilities.
 
-A first example with \tsobj{\showcoords{true}} (showing all coordinates defined with \tsobj{\ncoord}).
 %\showcoordstrue
 \showcoords{true}
 \begin{codestore}[crossdemoA]
-\resizebox{0.5\textwidth}{!}{
+\resizebox{0.45\textwidth}{!}{
 \begin{tikzpicture}
       %% This is the reference, named path
       %%
@@ -201,16 +238,25 @@ A first example with \tsobj{\showcoords{true}} (showing all coordinates defined 
 }
 \end{codestore}
 
-\tsdemo*[emph={draw,node,ncoord,pincoord,dotcoord,odotcoord},emph2={pathcross},emph3={name,path},basicstyle={\scriptsize\ttfamily},numbers=left]{crossdemoA}
+%\tsdemo*[emph={draw,node,ncoord,pincoord,dotcoord,odotcoord},emph2={pathcross},emph3={name,path},basicstyle={\scriptsize\ttfamily},numbers=left]{crossdemoA}
+\tscode*[dotncross keys]{crossdemoA}
+\newpage
+A first example with \tsobj{\showcoords{true}} (showing all coordinates defined with \tsobj{\ncoord}):
 
+\tsresult*[dotncross keys]{crossdemoA}
 And the same with \tsobj{\showcoords{false}}
 %\showcoordsfalse
 \showcoords{false}
 
-\tsresult*[emph={draw,node,ncoord,pincoord,dotcoord,odotcoord},emph2={pathcross},emph3={name,path},basicstyle={\scriptsize\ttfamily},numbers=left]{crossdemoA}
+%%\tsresult*[emph={draw,node,ncoord,pincoord,dotcoord,odotcoord},emph2={pathcross},emph3={name,path},basicstyle={\scriptsize\ttfamily},numbers=left]{crossdemoA}
+\tsresult*[dotncross keys]{crossdemoA}
 
-\newpage
-As said, the main limitation (derived from how \tsobj[pkg]{intersections} works) is that crossings between the line and nodes might not be detected at all. For example, if someone tries to connect the nodes \tsobj[key]{D1,D2}, it will, unfortunately, fail detecting the node (pnp transistor) entirely:
+%%%\begin{tabular}{lr}\hline\\
+%%%\showcoords{true} \tsexec{crossdemoA} & \showcoords{false} \tsexec{crossdemoA} \\
+%%%\hline
+%%%\end{tabular}\\
+
+The main limitation (derived from how \tsobj[pkg]{intersections} works) is that crossings between the line and nodes might not be detected at all. For example, if someone tries to connect the nodes \tsobj[key]{D1,D2}, it will, unfortunately, fail detecting the node (pnp transistor) entirely:
 
 %\showcoordstrue
 %\setpindefaults{coordcolor=cyan,pincolor=red}
@@ -245,7 +291,9 @@ As said, the main limitation (derived from how \tsobj[pkg]{intersections} works)
 }
 \end{codestore}
 
-\tsdemo*[emph={draw,node,ncoord,pincoord,dotcoord,odotcoord},emph2={pathcross},emph3={name,path},basicstyle={\scriptsize\ttfamily},numbers=left]{crossdemoC}
+%\tsdemo*[emph={draw,node,ncoord,pincoord,dotcoord,odotcoord},emph2={pathcross},emph3={name,path},basicstyle={\scriptsize\ttfamily},numbers=left]{crossdemoC}
+\tsdemo*[dotncross keys]{crossdemoC}
 
+\printbibliography
 
 \end{document} 

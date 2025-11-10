@@ -70,7 +70,10 @@ The Current Maintainer of this work is Alceu Frigeri
     - documentation in PDF format
 
 -------------
-* Version 1.3 (this)
+* Version 1.3b (this)
+    - code clean up (reducing expansion as much as possible)
+
+* Version 1.3
     - typos. adding \showcoords alternate form. rewriting the TeX part as expl
     - switching over pkginfograb package's info
 
