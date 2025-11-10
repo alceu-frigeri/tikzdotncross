@@ -63,6 +63,7 @@ The Current Maintainer of this work is Alceu Frigeri
 * README.md (this file)
     - quick introduction
 
+* tikzdotncross.bib
 * tikzdotncross.tex
     - package documentation
 
